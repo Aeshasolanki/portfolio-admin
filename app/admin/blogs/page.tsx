@@ -1,5 +1,6 @@
 "use client";
 
+import AdminNavbar from "@/app/AdminNavbar";
 import { useEffect, useState } from "react";
 
 interface BlogForm {
@@ -134,6 +135,7 @@ export default function AdminBlogs() {
 
   return (
     <div className="bg-gray-900 min-h-screen text-white">
+      <AdminNavbar/>
       <div className="p-10">
         <h1 className="text-4xl font-bold mb-8">Admin Blogs</h1>
 
