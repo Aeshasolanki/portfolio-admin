@@ -17,11 +17,11 @@ export default function AdminProjects() {
     app_store_url: "",
   });
 
-const fetchProjects = async () => {
-  const res = await fetch("https://portfolio-backend-clhc.onrender.com/api/apps");
-  const data = await res.json();
-  setProjects(data.apps);
-};
+  const fetchProjects = async () => {
+    const res = await fetch("https://portfolio-backend-clhc.onrender.com/api/apps");
+    const data = await res.json();
+    setProjects(data);
+  };
 
   useEffect(() => {
     fetchProjects();
