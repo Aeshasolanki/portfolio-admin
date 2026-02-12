@@ -1,8 +1,7 @@
 "use client";
+import AdminNavbar from "../../AdminNavbar";
 
-import AdminNavbar from "@/app/AdminNavbar";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 
 export default function AdminProjects() {
   const [projects, setProjects] = useState<any[]>([]);
@@ -18,6 +17,7 @@ export default function AdminProjects() {
     app_store_url: "",
   });
 
+  // Replace with your deployed backend URL
   const BASE_URL = "https://portfolio-backend-clhc.onrender.com";
 
   const fetchProjects = async () => {
@@ -43,10 +43,14 @@ export default function AdminProjects() {
     Object.entries(form).forEach(([key, value]) => {
       formData.append(key, value as string);
     });
+
     if (icon) formData.append("icon", icon);
 
     try {
-      await fetch(`${BASE_URL}/api/apps`, { method: "POST", body: formData });
+      await fetch(`${BASE_URL}/api/apps`, {
+        method: "POST",
+        body: formData,
+      });
       setForm({
         name: "",
         slug: "",
@@ -65,7 +69,9 @@ export default function AdminProjects() {
 
   const deleteProject = async (id: number) => {
     try {
-      await fetch(`${BASE_URL}/api/apps/${id}`, { method: "DELETE" });
+      await fetch(`${BASE_URL}/api/apps/${id}`, {
+        method: "DELETE",
+      });
       fetchProjects();
     } catch (err) {
       console.error("Error deleting project:", err);
@@ -73,132 +79,107 @@ export default function AdminProjects() {
   };
 
   return (
-    <div className="p-10 bg-gradient-to-b from-gray-900 to-gray-800 min-h-screen text-white">
-      <AdminNavbar />
-      <motion.h1
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="text-5xl font-extrabold mb-10 text-center text-gradient bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600"
-      >
-        Admin Panel
-      </motion.h1>
+    <div className="p-10 bg-gray-900 min-h-screen text-white">
+     <AdminNavbar/>
+      <h1 className="text-4xl font-bold mb-8">Admin Panel</h1>
 
       {/* ===== Add Project Form ===== */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="bg-gray-800 p-8 rounded-2xl shadow-2xl mb-12 max-w-4xl mx-auto"
-      >
-        <h2 className="text-3xl font-semibold mb-6 text-center text-blue-400">
-          Add New Project
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="bg-gray-800 p-6 rounded-lg shadow-md mb-10">
+        <h2 className="text-2xl font-semibold mb-4">Add New Project</h2>
+        <div className="grid grid-cols-2 gap-4">
           {Object.keys(form).map((key) => (
-            <motion.input
+            <input
               key={key}
               name={key}
               value={(form as any)[key]}
               onChange={handleChange}
               placeholder={key.replace("_", " ")}
-              whileFocus={{ scale: 1.05, borderColor: "#4f46e5" }}
-              className="border border-gray-600 rounded-xl px-4 py-3 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              className="border border-gray-600 rounded px-3 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           ))}
-          <motion.input
+
+          <input
             type="file"
             onChange={(e) => setIcon(e.target.files?.[0] || null)}
-            whileHover={{ scale: 1.05 }}
-            className="border border-gray-600 rounded-xl px-4 py-3 bg-gray-700 text-white"
+            className="border border-gray-600 rounded px-3 py-2 bg-gray-700 text-white"
           />
         </div>
-        <motion.button
+
+        <button
           onClick={addProject}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="bg-gradient-to-r from-blue-500 to-purple-600 mt-6 px-8 py-3 rounded-full font-bold text-white shadow-lg hover:shadow-xl transition"
+          className="bg-blue-600 hover:bg-blue-700 transition mt-6 px-6 py-2 rounded font-semibold"
         >
           Add Project
-        </motion.button>
-      </motion.div>
+        </button>
+      </div>
 
       {/* ===== Projects Table ===== */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="bg-gray-800 p-6 rounded-2xl shadow-2xl max-w-6xl mx-auto"
-      >
-        <h2 className="text-3xl font-semibold mb-6 text-center text-purple-400">
-          Projects
-        </h2>
+      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+        <h2 className="text-2xl font-semibold mb-4">Projects</h2>
         <div className="overflow-x-auto">
-          <table className="min-w-full border border-gray-700 rounded-xl overflow-hidden">
+          <table className="min-w-full border border-gray-700">
             <thead className="bg-gray-700">
               <tr>
-                {["ID", "Name", "Slug", "Category", "Tagline", "Description", "Description Secondary", "App Store URL", "Icon", "Actions"].map(
-                  (header) => (
-                    <th
-                      key={header}
-                      className="p-3 text-left text-gray-200 uppercase tracking-wider text-sm"
-                    >
-                      {header}
-                    </th>
-                  )
-                )}
+                <th className="p-3 text-left">ID</th>
+                <th className="p-3 text-left">Name</th>
+                <th className="p-3 text-left">Slug</th>
+                <th className="p-3 text-left">Category</th>
+                <th className="p-3 text-left">Tagline</th>
+                <th className="p-3 text-left">Description</th>
+                <th className="p-3 text-left">Description Secondary</th>
+                <th className="p-3 text-left">App Store URL</th>
+                <th className="p-3 text-left">Icon</th>
+                <th className="p-3 text-left">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {projects.filter((p) => p.name).map((p) => (
-                <motion.tr
-                  key={p.id}
-                  whileHover={{ scale: 1.02, backgroundColor: "rgba(59, 130, 246, 0.1)" }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                  className="border-t border-gray-700"
-                >
-                  <td className="p-3">{p.id}</td>
-                  <td className="p-3 font-semibold">{p.name}</td>
-                  <td className="p-3">{p.slug}</td>
-                  <td className="p-3">{p.category}</td>
-                  <td className="p-3">{p.tagline}</td>
-                  <td className="p-3">{p.description}</td>
-                  <td className="p-3">{p.description_secondary}</td>
-                  <td className="p-3">
-                    <a
-                      href={p.app_store_url}
-                      target="_blank"
-                      className="text-blue-400 underline"
-                    >
-                      Link
-                    </a>
-                  </td>
-                  <td className="p-3">
-                    {p.icon_url ? (
-                      <img
-                        src={p.icon_url.replace("localhost:5000", "portfolio-backend-clhc.onrender.com")}
-                        alt={p.name || "Project Icon"}
-                        className="w-12 h-12 object-cover rounded-xl border border-gray-600"
-                      />
-                    ) : (
-                      "No icon"
-                    )}
-                  </td>
-                  <td className="p-3">
-                    <motion.button
-                      onClick={() => deleteProject(p.id)}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full font-semibold transition"
-                    >
-                      Delete
-                    </motion.button>
-                  </td>
-                </motion.tr>
-              ))}
+              {projects
+                .filter((p) => p.name) // optional: skip empty projects
+                .map((p) => (
+                  <tr key={p.id} className="border-t border-gray-700 hover:bg-gray-700">
+                    <td className="p-3">{p.id}</td>
+                    <td className="p-3">{p.name}</td>
+                    <td className="p-3">{p.slug}</td>
+                    <td className="p-3">{p.category}</td>
+                    <td className="p-3">{p.tagline}</td>
+                    <td className="p-3">{p.description}</td>
+                    <td className="p-3">{p.description_secondary}</td>
+                    <td className="p-3">
+                      <a
+                        href={p.app_store_url}
+                        target="_blank"
+                        className="text-blue-400 underline"
+                      >
+                        Link
+                      </a>
+                    </td>
+                    <td className="p-3">
+                      {p.icon_url ? (
+                        <img
+                          src={p.icon_url.replace(
+                            "localhost:5000",
+                            "portfolio-backend-clhc.onrender.com"
+                          )}
+                          alt={p.name || "Project Icon"}
+                          className="w-10 h-10 object-cover rounded"
+                        />
+                      ) : (
+                        "No icon"
+                      )}
+                    </td>
+                    <td className="p-3">
+                      <button
+                        onClick={() => deleteProject(p.id)}
+                        className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded font-semibold"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
               {projects.length === 0 && (
                 <tr>
-                  <td colSpan={10} className="text-center p-6 text-gray-400">
+                  <td colSpan={10} className="text-center p-4 text-gray-400">
                     No projects found.
                   </td>
                 </tr>
@@ -206,7 +187,7 @@ export default function AdminProjects() {
             </tbody>
           </table>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
