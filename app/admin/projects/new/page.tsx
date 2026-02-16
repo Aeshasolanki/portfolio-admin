@@ -28,10 +28,12 @@ export default function NewProjectPage() {
   const saveProject = async () => {
     try {
       setSaving(true);
+
       const formData = new FormData();
       Object.entries(form).forEach(([key, value]) =>
         formData.append(key, value as string)
       );
+
       if (icon) formData.append("icon", icon);
 
       await fetch(`${BASE_URL}/api/apps`, {
@@ -48,131 +50,153 @@ export default function NewProjectPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a0f1a] to-[#0f122a] text-white px-6 py-12">
-      <div className="max-w-4xl mx-auto space-y-10">
+    <div className="min-h-screen bg-gradient-to-br from-[#060b16] via-[#0b1120] to-[#111827] text-white px-6 py-14 relative overflow-hidden">
+      
+      {/* Background Glow */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-500/20 blur-[120px] rounded-full" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/20 blur-[120px] rounded-full" />
+
+      <div className="relative max-w-5xl mx-auto">
+
         {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-extrabold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent">
             ➕ Add New Project
           </h1>
-          <p className="text-gray-400">Create a new project entry</p>
+          <p className="text-gray-400 mt-3 text-lg">
+            Create a new project entry
+          </p>
         </div>
 
-        {/* Form Card */}
-        <div className="bg-[#0f172a]/70 backdrop-blur-xl rounded-3xl p-8 md:p-10 shadow-2xl border border-cyan-500/20 hover:shadow-cyan-500/50 transition-all duration-500">
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Name */}
-            <div className="flex flex-col space-y-2">
-              <label className="text-sm text-gray-300 font-medium">Name</label>
-              <input
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                placeholder="Project name"
-                className="bg-[#09131f]/60 border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition"
-              />
+        {/* Card */}
+        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-10 shadow-[0_0_60px_rgba(0,255,255,0.08)]">
+
+          <div className="space-y-8">
+
+            <div className="grid md:grid-cols-2 gap-8">
+
+              {[
+                { label: "Project Name", name: "name" },
+                { label: "Slug", name: "slug" },
+                { label: "Category", name: "category" },
+                { label: "Tagline", name: "tagline" },
+                { label: "App Store URL", name: "app_store_url", type: "url" },
+              ].map((field) => (
+                <div key={field.name} className="relative">
+                  <input
+                    type={field.type || "text"}
+                    name={field.name}
+                    value={(form as any)[field.name]}
+                    onChange={handleChange}
+                    placeholder=" "
+                    className="peer w-full bg-transparent border border-white/20 rounded-2xl px-4 pt-6 pb-3 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30 outline-none transition"
+                  />
+                  <label className="absolute left-4 top-3 text-gray-400 text-sm transition-all 
+                    peer-placeholder-shown:top-4 
+                    peer-placeholder-shown:text-base 
+                    peer-placeholder-shown:text-gray-500
+                    peer-focus:top-2 
+                    peer-focus:text-sm 
+                    peer-focus:text-cyan-400">
+                    {field.label}
+                  </label>
+                </div>
+              ))}
+
+              {/* Description */}
+              <div className="md:col-span-2 relative">
+                <textarea
+                  name="description"
+                  value={form.description}
+                  onChange={handleChange}
+                  placeholder=" "
+                  rows={4}
+                  className="peer w-full bg-transparent border border-white/20 rounded-2xl px-4 pt-6 pb-3 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30 outline-none transition"
+                />
+                <label className="absolute left-4 top-3 text-gray-400 text-sm transition-all 
+                  peer-placeholder-shown:top-4 
+                  peer-placeholder-shown:text-base 
+                  peer-placeholder-shown:text-gray-500
+                  peer-focus:top-2 
+                  peer-focus:text-sm 
+                  peer-focus:text-cyan-400">
+                  Description
+                </label>
+              </div>
+
+              {/* Secondary Description */}
+              <div className="md:col-span-2 relative">
+                <textarea
+                  name="description_secondary"
+                  value={form.description_secondary}
+                  onChange={handleChange}
+                  placeholder=" "
+                  rows={3}
+                  className="peer w-full bg-transparent border border-white/20 rounded-2xl px-4 pt-6 pb-3 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/30 outline-none transition"
+                />
+                <label className="absolute left-4 top-3 text-gray-400 text-sm transition-all 
+                  peer-placeholder-shown:top-4 
+                  peer-placeholder-shown:text-base 
+                  peer-placeholder-shown:text-gray-500
+                  peer-focus:top-2 
+                  peer-focus:text-sm 
+                  peer-focus:text-purple-400">
+                  Additional Details
+                </label>
+              </div>
+
+              {/* Icon Upload */}
+              <div className="md:col-span-2 flex flex-col items-center gap-4">
+
+                {icon && (
+                  <div className="relative group">
+                    <div className="absolute inset-0 rounded-full bg-cyan-400 blur-2xl opacity-30" />
+                    <img
+                      src={URL.createObjectURL(icon)}
+                      alt="Preview"
+                      className="relative w-32 h-32 rounded-full object-cover border-4 border-white/20 shadow-xl"
+                    />
+                  </div>
+                )}
+
+                <label className="cursor-pointer bg-gradient-to-r from-cyan-500 to-purple-500 px-6 py-3 rounded-xl font-medium hover:scale-105 transition">
+                  {icon ? "Change Icon" : "Upload Icon"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={(e) =>
+                      setIcon(e.target.files?.[0] || null)
+                    }
+                  />
+                </label>
+
+                {icon && (
+                  <p className="text-sm text-cyan-400">
+                    Selected: {icon.name}
+                  </p>
+                )}
+              </div>
             </div>
 
-            {/* Slug */}
-            <div className="flex flex-col space-y-2">
-              <label className="text-sm text-gray-300 font-medium">Slug</label>
-              <input
-                name="slug"
-                value={form.slug}
-                onChange={handleChange}
-                placeholder="project-slug"
-                className="bg-[#09131f]/60 border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition"
-              />
+            {/* Buttons */}
+            <div className="flex justify-end gap-5 pt-8 border-t border-white/10">
+              <button
+                onClick={() => router.push("/admin/projects")}
+                className="px-8 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={saveProject}
+                disabled={saving}
+                className="px-10 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-400 to-purple-500 text-black hover:scale-105 transition disabled:opacity-60"
+              >
+                {saving ? "Saving..." : "Save Project"}
+              </button>
             </div>
 
-            {/* Category */}
-            <div className="flex flex-col space-y-2">
-              <label className="text-sm text-gray-300 font-medium">Category</label>
-              <input
-                name="category"
-                value={form.category}
-                onChange={handleChange}
-                placeholder="Category"
-                className="bg-[#09131f]/60 border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition"
-              />
-            </div>
-
-            {/* Tagline */}
-            <div className="flex flex-col space-y-2">
-              <label className="text-sm text-gray-300 font-medium">Tagline</label>
-              <input
-                name="tagline"
-                value={form.tagline}
-                onChange={handleChange}
-                placeholder="Short tagline"
-                className="bg-[#09131f]/60 border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition"
-              />
-            </div>
-
-            {/* Description */}
-            <div className="md:col-span-2 flex flex-col space-y-2">
-              <label className="text-sm text-gray-300 font-medium">Description</label>
-              <textarea
-                name="description"
-                value={form.description}
-                onChange={handleChange}
-                rows={4}
-                placeholder="Main description"
-                className="bg-[#09131f]/60 border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition"
-              />
-            </div>
-
-            {/* Secondary Description */}
-            <div className="md:col-span-2 flex flex-col space-y-2">
-              <label className="text-sm text-gray-300 font-medium">
-                Additional Details
-              </label>
-              <textarea
-                name="description_secondary"
-                value={form.description_secondary}
-                onChange={handleChange}
-                rows={3}
-                placeholder="Extra info"
-                className="bg-[#09131f]/60 border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition"
-              />
-            </div>
-
-            {/* App Store URL */}
-            <div className="flex flex-col space-y-2">
-              <label className="text-sm text-gray-300 font-medium">App Store URL</label>
-              <input
-                type="url"
-                name="app_store_url"
-                value={form.app_store_url}
-                onChange={handleChange}
-                placeholder="https://..."
-                className="bg-[#09131f]/60 border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition"
-              />
-            </div>
-
-            {/* Icon Upload */}
-            <div className="flex flex-col space-y-2">
-              <label className="text-sm text-gray-300 font-medium">Icon</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setIcon(e.target.files?.[0] || null)}
-                className="bg-[#09131f]/60 border border-white/10 rounded-2xl px-4 py-3 w-full text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition"
-              />
-              {icon && <p className="text-xs text-cyan-400">New icon: {icon.name}</p>}
-            </div>
-          </div>
-
-          {/* Buttons */}
-          <div className="flex gap-4 mt-6 justify-end">
-            <button
-              onClick={saveProject}
-              disabled={saving}
-              className="px-8 py-3 rounded-2xl font-semibold text-black bg-cyan-400 hover:bg-cyan-500 transition disabled:opacity-60"
-            >
-              {saving ? "Saving..." : "Save Project"}
-            </button>
-            <button onClick={() => router.push("/admin/projects")} className="px-8 py-3 rounded-2xl font-semibold text-white bg-gray-700 hover:bg-gray-600 transition">Cancel</button>
           </div>
         </div>
       </div>

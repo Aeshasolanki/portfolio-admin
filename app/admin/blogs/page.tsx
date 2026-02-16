@@ -18,7 +18,9 @@ interface Blog {
 export default function AdminBlogs() {
   const router = useRouter();
   const API_URL = "https://portfolio-backend-clhc.onrender.com/api/blogs";
+
   const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchBlogs();
@@ -32,13 +34,14 @@ export default function AdminBlogs() {
     } catch (err) {
       console.error("Failed to fetch blogs:", err);
       setBlogs([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const goToEdit = (id: number) => router.push(`/admin/blogs/${id}/edit`);
-
   const deleteBlog = async (id: number) => {
     if (!confirm("Are you sure you want to delete this blog?")) return;
+
     try {
       await fetch(`${API_URL}/${id}`, { method: "DELETE" });
       fetchBlogs();
@@ -48,87 +51,144 @@ export default function AdminBlogs() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a0f1a] to-[#0f122a] text-white px-6 py-12">
-      <div className="max-w-7xl mx-auto space-y-12">
+    <div className="min-h-screen bg-gradient-to-br from-[#060b16] via-[#0b1120] to-[#111827] text-white px-6 py-14 relative overflow-hidden">
+
+      {/* Background Glow */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-500/20 blur-[120px] rounded-full" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/20 blur-[120px] rounded-full" />
+
+      <div className="relative max-w-7xl mx-auto space-y-12">
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
-          <div className="space-y-2">
-            <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
-              📝 Blogs Admin
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div>
+            <h1 className="text-5xl font-extrabold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent">
+              📚 Blog Admin
             </h1>
-            <p className="text-gray-400">Manage and organize your portfolio blogs</p>
+            <p className="text-gray-400 mt-3 text-lg">
+              Manage and review all blog content
+            </p>
           </div>
+
           <Link
             href="/admin/blogs/new"
-            className="px-6 py-3 rounded-2xl font-semibold text-black bg-cyan-400 hover:bg-cyan-500 transition"
+            className="px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-400 to-purple-500 text-black hover:scale-105 transition"
           >
             + Add Blog
           </Link>
         </div>
 
-        {/* Blogs List */}
-        <div className="space-y-6">
-          {blogs.length > 0 ? (
-            blogs.map((b) => (
-              <div
-                key={b.id}
-                className="bg-[#0f172a]/70 backdrop-blur-xl border border-white/10 rounded-3xl p-6 hover:shadow-lg hover:shadow-cyan-400/40 transition cursor-pointer"
-                onClick={() => goToEdit(b.id)}
-              >
-                <div className="flex flex-col md:flex-row gap-6">
-                  {/* Blog Image */}
-                  {b.image_url && (
-                    <img
-                      src={b.image_url.replace("localhost:5000", "portfolio-backend-clhc.onrender.com")}
-                      alt={b.title}
-                      className="w-full md:w-28 h-28 object-cover rounded-2xl border border-white/10"
-                    />
-                  )}
+        {/* Card Container */}
+        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-10 shadow-[0_0_60px_rgba(0,255,255,0.08)]">
 
-                  {/* Blog Details */}
-                  <div className="flex-1 space-y-2">
-                    <h3 className="text-2xl font-bold text-cyan-400">{b.title}</h3>
-                    <p className="text-gray-300 line-clamp-2">{b.short_description}</p>
+          {loading ? (
+            <div className="flex justify-center py-16">
+              <div className="w-10 h-10 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : blogs.length === 0 ? (
+            <p className="text-center text-gray-500 py-12 text-lg">
+              No blogs found
+            </p>
+          ) : (
+            <div className="space-y-12">
+              {blogs.map((b) => (
+                <div
+                  key={b.id}
+                  className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-cyan-400/50 transition"
+                >
+                  <div className="flex flex-col md:flex-row gap-8">
 
-                    <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-400">
-                      <p><span className="text-purple-400">Slug:</span> {b.slug}</p>
-                      <p><span className="text-purple-400">Category:</span> {b.category}</p>
-                    </div>
+                    {/* Image */}
+                    {b.image_url && (
+                      <img
+                        src={b.image_url.replace(
+                          "localhost:5000",
+                          "portfolio-backend-clhc.onrender.com"
+                        )}
+                        alt={b.title}
+                        className="w-full md:w-48 h-48 object-cover rounded-2xl border border-white/10"
+                      />
+                    )}
 
-                    <p className="text-gray-400 line-clamp-3">{b.content}</p>
+                    <div className="flex-1 space-y-6">
 
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-500 mt-2">
-                      <p><span className="text-cyan-400">Author:</span> {b.author_name}</p>
-                      <p><span className="text-cyan-400">Status:</span> {b.status}</p>
+                      {/* Title + Status */}
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <h2 className="text-3xl font-bold text-white">
+                          {b.title}
+                        </h2>
+
+                        <span
+                          className={`px-4 py-1 rounded-full text-sm font-semibold ${
+                            b.status === "published"
+                              ? "bg-cyan-500/20 text-cyan-400"
+                              : "bg-purple-500/20 text-purple-400"
+                          }`}
+                        >
+                          {b.status}
+                        </span>
+                      </div>
+
+                      {/* Meta Info */}
+                      <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-300">
+                        <p>
+                          <span className="text-cyan-400 font-semibold">Slug:</span>{" "}
+                          {b.slug}
+                        </p>
+                        <p>
+                          <span className="text-cyan-400 font-semibold">Category:</span>{" "}
+                          {b.category}
+                        </p>
+                        <p>
+                          <span className="text-cyan-400 font-semibold">Author:</span>{" "}
+                          {b.author_name}
+                        </p>
+                      </div>
+
+                      {/* Short Description */}
+                      <div>
+                        <h4 className="text-cyan-400 font-semibold mb-2">
+                          Short Description
+                        </h4>
+                        <p className="text-gray-400 whitespace-pre-wrap">
+                          {b.short_description}
+                        </p>
+                      </div>
+
+                      {/* Full Content */}
+                      <div>
+                        <h4 className="text-purple-400 font-semibold mb-2">
+                          Full Content
+                        </h4>
+                        <p className="text-gray-300 whitespace-pre-wrap">
+                          {b.content}
+                        </p>
+                      </div>
+
+                      {/* Buttons */}
+                      <div className="flex gap-4 pt-6 border-t border-white/10">
+                        <Link
+                          href={`/admin/blogs/${b.id}/edit`}
+                          className="px-6 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition"
+                        >
+                          Edit
+                        </Link>
+
+                        <button
+                          onClick={() => deleteBlog(b.id)}
+                          className="px-6 py-2 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 transition"
+                        >
+                          Delete
+                        </button>
+                      </div>
+
                     </div>
                   </div>
                 </div>
-
-                {/* Action Buttons */}
-                <div className="mt-4 flex gap-3 justify-end">
-                  <Link
-                    href={`/admin/blogs/${b.id}/edit`}
-                    className="px-5 py-2 rounded-2xl font-semibold text-white bg-slate-700 hover:bg-slate-600 transition"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    Edit
-                  </Link>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteBlog(b.id);
-                    }}
-                    className="px-5 py-2 rounded-2xl font-semibold text-white bg-red-600 hover:bg-red-500 transition"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-500 py-20 text-lg">No blogs found</p>
+              ))}
+            </div>
           )}
+
         </div>
       </div>
     </div>
